@@ -1,0 +1,37 @@
+<div class="container">
+    <div class="box">
+      <h3>Available Tags:</h3>
+      <ul>
+        <li *ngFor="let tag of availableTags" 
+            (click)="selectTag(tag, $event, false)"
+            [class.selected]="selectedTags.includes(tag)">
+          {{ tag }}
+        </li>
+      </ul>
+    </div>
+  
+    <div class="controls">
+      <button mat-icon-button 
+              (click)="moveSelectedTags(true)"
+              [class.selected]="isMoveToRightAllowed()">
+        <mat-icon>arrow_forward</mat-icon>
+      </button>
+      <button mat-icon-button 
+              (click)="moveSelectedTags(false)"
+              [class.selected]="isMoveToLeftAllowed()">
+        <mat-icon>arrow_back</mat-icon>
+      </button>
+    </div>
+  
+    <div class="box">
+      <h3>Selected Tags:</h3>
+      <ul>
+        <li *ngFor="let tag of rightBoxTags"
+            (click)="selectTag(tag, $event, true)"
+            [class.selected]="selectedTags.includes(tag)">
+          {{ tag }}
+        </li>
+      </ul>
+    </div>
+  </div>
+  
