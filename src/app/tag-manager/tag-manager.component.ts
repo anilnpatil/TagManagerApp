@@ -15,14 +15,16 @@ export class TagManagerComponent implements OnInit {
   constructor(private http: HttpClient) {}
 
   ngOnInit(): void {
-    this.loadState();
     this.fetchTags();
   }
 
   fetchTags() {
     this.http.get<{ tags: string[] }>('http://localhost:8083/readDataTagsFromPlc').subscribe(response => {
-      const savedTags = JSON.parse(localStorage.getItem('savedTags') || '[]');
-      this.availableTags = response.tags.filter(tag => !savedTags.includes(tag));
+      this.http.get<string[]>('http://localhost:8081/getSavedTags').subscribe(savedTags => {
+        // Filter out saved tags from available tags
+        this.availableTags = response.tags.filter(tag => !savedTags.includes(tag));
+        this.rightBoxTags = []; // Ensure right box tags are empty on load
+      });
     });
   }
 
@@ -49,7 +51,6 @@ export class TagManagerComponent implements OnInit {
       this.rightBoxTags = this.rightBoxTags.filter(tag => !this.selectedTags.includes(tag));
     }
     this.selectedTags = [];
-    this.saveState();
   }
 
   isMoveToRightAllowed(): boolean {
@@ -60,34 +61,14 @@ export class TagManagerComponent implements OnInit {
     return !this.fromAvailable && this.selectedTags.length > 0;
   }
 
-  saveState() {
-    localStorage.setItem('rightBoxTags', JSON.stringify(this.rightBoxTags));
-    localStorage.setItem('availableTags', JSON.stringify(this.availableTags));
-  }
-
-  loadState() {
-    const rightBoxTags = localStorage.getItem('rightBoxTags');
-    const availableTags = localStorage.getItem('availableTags');
-    if (rightBoxTags) {
-      this.rightBoxTags = JSON.parse(rightBoxTags);
-    }
-    if (availableTags) {
-      this.availableTags = JSON.parse(availableTags);
-    }
-  }
-
   saveSelectedTags() {
     this.http.post('http://localhost:8081/saveSelectedTags', { tags: this.rightBoxTags }).subscribe(() => {
-      const savedTags = JSON.parse(localStorage.getItem('savedTags') || '[]');
-      localStorage.setItem('savedTags', JSON.stringify([...savedTags, ...this.rightBoxTags]));
       this.rightBoxTags = [];
-      this.saveState();
-      this.fetchTags();
+      this.fetchTags(); // Refresh available tags after saving
     });
   }
 
   clearSelectedTags() {
     this.rightBoxTags = [];
-    this.saveState();
   }
 }

@@ -1,6 +1,6 @@
 <div class="container">
   <div class="box">
-    <h3>Available Tags:</h3>
+    <h2>Available Tags:</h2>
     <ul>
       <li *ngFor="let tag of availableTags" 
           (click)="selectTag(tag, $event, false)"
@@ -24,7 +24,7 @@
   </div>
 
   <div class="box">
-    <h3>Selected Tags:</h3>
+    <h2>Selected Tags:</h2>
     <ul>
       <li *ngFor="let tag of rightBoxTags"
           (click)="selectTag(tag, $event, true)"
@@ -33,8 +33,8 @@
       </li>
     </ul>
     <div *ngIf="rightBoxTags.length > 0">
-      <button (click)="saveSelectedTags()">OK</button>
-      <button (click)="clearSelectedTags()">Cancel</button>
+      <button class="ok" (click)="saveSelectedTags()">OK</button>
+      <button class="cancel" (click)="clearSelectedTags()">Cancel</button>
     </div>
   </div>
 </div>

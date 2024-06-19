@@ -1,56 +1,96 @@
 .container {
-    display: flex;
-    justify-content: space-around;
-    align-items: center;
-    height: 100vh;
-    padding: 20px;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  height: 100vh;
+  padding: 20px;
+}
+
+.box {
+  border: 1px solid #ccc;
+  padding: 20px;
+  width: 35%;
+  height: 80%;
+  overflow-y: auto;
+}
+
+.controls {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.controls button {
+  margin: 10px 0;
+  background-color: white;
+  border: 2px solid #ccc;
+  border-radius: 5px;
+  box-shadow: 3px 3px 5px #999;
+  transition: background-color 0.3s, transform 0.3s;
+}
+
+.controls button:active {
+  box-shadow: inset 3px 3px 5px #999;
+  transform: translateY(2px);
+}
+
+.controls button.selected {
+  background-color: lightgreen;
+}
+
+ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+li {
+  padding: 10px;
+  cursor: pointer;
+}
+
+li.selected {
+  background-color: #00ff04;
+  color: rgb(41, 9, 247);
+}
+
+.box button {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  padding: 10px 20px;
+  margin-right: 10px;
+  cursor: pointer;
+  transition: background-color 0.3s, transform 0.3s;
+  flex: 1; // Make buttons take equal space
+  box-shadow: 3px 3px 5px #999;
+}
+
+.box button:last-child {
+  margin-right: 0; // Remove right margin for the last button
+}
+
+.box button:hover {
+  background-color: #0056b3; // Default hover color for buttons
+}
+
+.box button.ok:hover {
+  background-color: #00b32d; // Green hover color for OK button
+}
+
+.box button.cancel:hover {
+  background-color: #ffcc00; // Yellow hover color for Cancel button
+}
+
+.box button:active {
+  box-shadow: inset 3px 3px 5px #999;
+  transform: translateY(2px);
+}
+
+@media (max-width: 768px) {
+  .box button {
+    width: 100%;
+    margin: 5px 0;
   }
-  
-  .box {
-    border: 1px solid #ccc;
-    padding: 20px;
-    width: 30%;
-    height: 80%;
-    overflow-y: auto;
-  }
-  
-  .controls {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-  }
-  
-  .controls button {
-    margin: 10px 0;
-    background-color: white;
-    border: 2px solid #ccc;
-    border-radius: 5px;
-    box-shadow: 3px 3px 5px #999;
-    transition: background-color 0.3s, transform 0.3s;
-  }
-  
-  .controls button:active {
-    box-shadow: inset 3px 3px 5px #999;
-    transform: translateY(2px);
-  }
-  
-  .controls button.selected {
-    background-color: lightgreen;
-  }
-  
-  ul {
-    list-style-type: none;
-    padding: 0;
-  }
-  
-  li {
-    padding: 10px;
-    cursor: pointer;
-  }
-  
-  li.selected {
-    background-color: #007bff;
-    color: white;
-  }
-  
+}
