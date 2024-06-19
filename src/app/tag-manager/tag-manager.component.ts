@@ -21,7 +21,8 @@ export class TagManagerComponent implements OnInit {
 
   fetchTags() {
     this.http.get<{ tags: string[] }>('http://localhost:8083/readDataTagsFromPlc').subscribe(response => {
-      this.availableTags = response.tags.filter(tag => !this.rightBoxTags.includes(tag));
+      const savedTags = JSON.parse(localStorage.getItem('savedTags') || '[]');
+      this.availableTags = response.tags.filter(tag => !savedTags.includes(tag));
     });
   }
 
@@ -73,5 +74,20 @@ export class TagManagerComponent implements OnInit {
     if (availableTags) {
       this.availableTags = JSON.parse(availableTags);
     }
+  }
+
+  saveSelectedTags() {
+    this.http.post('http://localhost:8081/saveSelectedTags', { tags: this.rightBoxTags }).subscribe(() => {
+      const savedTags = JSON.parse(localStorage.getItem('savedTags') || '[]');
+      localStorage.setItem('savedTags', JSON.stringify([...savedTags, ...this.rightBoxTags]));
+      this.rightBoxTags = [];
+      this.saveState();
+      this.fetchTags();
+    });
+  }
+
+  clearSelectedTags() {
+    this.rightBoxTags = [];
+    this.saveState();
   }
 }
