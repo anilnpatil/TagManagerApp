@@ -10,9 +10,10 @@ export class TagManagerComponent implements OnInit {
   availableTags: string[] = [];
   selectedTags: string[] = [];
   rightBoxTags: string[] = [];
-  fromAvailable: boolean = false; // Track the origin of selected tags
-  message: string = ''; // To display success or error message
-  messageType: string = ''; // 'success' or 'error'
+  fromAvailable = false; // Track the origin of selected tags
+  message = ''; // To display success or error message
+  messageType = ''; // 'success' or 'error'
+  okButtonDisabled = true; // Disable OK button initially
 
   constructor(private http: HttpClient) {}
 
@@ -20,17 +21,18 @@ export class TagManagerComponent implements OnInit {
     this.fetchTags();
   }
 
-  fetchTags() {
+  fetchTags(): void {
     this.http.get<{ tags: string[] }>('http://localhost:8083/readDataTagsFromPlc').subscribe(response => {
       this.http.get<string[]>('http://localhost:8081/getSavedTags').subscribe(savedTags => {
         // Filter out saved tags from available tags
         this.availableTags = response.tags.filter(tag => !savedTags.includes(tag));
         this.rightBoxTags = []; // Ensure right box tags are empty on load
+        this.updateButtonGlow(); // Update button states after fetching tags
       });
     });
   }
 
-  selectTag(tag: string, event: MouseEvent, fromRightBox: boolean = false) {
+  selectTag(tag: string, event: MouseEvent, fromRightBox = false): void {
     if (event.ctrlKey) {
       if (this.selectedTags.includes(tag)) {
         this.selectedTags = this.selectedTags.filter(t => t !== tag);
@@ -44,7 +46,7 @@ export class TagManagerComponent implements OnInit {
     this.fromAvailable = !fromRightBox;
   }
 
-  moveSelectedTags(toRight: boolean) {
+  moveSelectedTags(toRight: boolean): void {
     if (toRight && this.fromAvailable) {
       this.rightBoxTags.push(...this.selectedTags);
       this.availableTags = this.availableTags.filter(tag => !this.selectedTags.includes(tag));
@@ -64,7 +66,7 @@ export class TagManagerComponent implements OnInit {
     return !this.fromAvailable && this.selectedTags.length > 0;
   }
 
-  saveSelectedTags() {
+  saveSelectedTags(): void {
     this.http.post<{ message: string }>('http://localhost:8081/saveSelectedTags', { tags: this.rightBoxTags })
       .subscribe({
         next: response => {
@@ -73,6 +75,7 @@ export class TagManagerComponent implements OnInit {
           this.rightBoxTags = [];
           this.updateButtonGlow();
           this.fetchTags(); // Refresh available tags after saving
+          this.setOkButtonDisabled(true); // Disable OK button after saving
 
           // Clear message after 2 seconds
           setTimeout(() => {
@@ -93,20 +96,30 @@ export class TagManagerComponent implements OnInit {
       });
   }
 
-  clearSelectedTags() {
+  clearSelectedTags(): void {
     this.rightBoxTags = [];
     this.updateButtonGlow();
+    this.setOkButtonDisabled(true); // Disable OK button after clearing
   }
 
   updateButtonGlow(): void {
     const okButton = document.querySelector('.bottom-controls .ok');
     const cancelButton = document.querySelector('.bottom-controls .cancel');
-    if (this.rightBoxTags.length > 0) {
-      okButton?.classList.add('glow');
-      cancelButton?.classList.add('glow');
-    } else {
-      okButton?.classList.remove('glow');
-      cancelButton?.classList.remove('glow');
+    if (okButton && cancelButton) {
+      if (this.rightBoxTags.length > 0) {
+        okButton.classList.add('glow');
+        cancelButton.classList.add('glow');
+      } else {
+        okButton.classList.remove('glow');
+        cancelButton.classList.remove('glow');
+      }
+      // Disable buttons based on tag presence
+      (okButton as HTMLButtonElement).disabled = this.rightBoxTags.length === 0;
+      (cancelButton as HTMLButtonElement).disabled = this.rightBoxTags.length === 0;
     }
+  }
+
+  setOkButtonDisabled(disabled: boolean): void {
+    this.okButtonDisabled = disabled;
   }
 }
