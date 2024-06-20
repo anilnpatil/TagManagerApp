@@ -11,6 +11,8 @@ export class TagManagerComponent implements OnInit {
   selectedTags: string[] = [];
   rightBoxTags: string[] = [];
   fromAvailable: boolean = false; // Track the origin of selected tags
+  message: string = ''; // To display success or error message
+  messageType: string = ''; // 'success' or 'error'
 
   constructor(private http: HttpClient) {}
 
@@ -51,6 +53,7 @@ export class TagManagerComponent implements OnInit {
       this.rightBoxTags = this.rightBoxTags.filter(tag => !this.selectedTags.includes(tag));
     }
     this.selectedTags = [];
+    this.updateButtonGlow();
   }
 
   isMoveToRightAllowed(): boolean {
@@ -62,13 +65,48 @@ export class TagManagerComponent implements OnInit {
   }
 
   saveSelectedTags() {
-    this.http.post('http://localhost:8081/saveSelectedTags', { tags: this.rightBoxTags }).subscribe(() => {
-      this.rightBoxTags = [];
-      this.fetchTags(); // Refresh available tags after saving
-    });
+    this.http.post<{ message: string }>('http://localhost:8081/saveSelectedTags', { tags: this.rightBoxTags })
+      .subscribe({
+        next: response => {
+          this.message = response.message;
+          this.messageType = 'success';
+          this.rightBoxTags = [];
+          this.updateButtonGlow();
+          this.fetchTags(); // Refresh available tags after saving
+
+          // Clear message after 2 seconds
+          setTimeout(() => {
+            this.message = '';
+            this.messageType = '';
+          }, 2000);
+        },
+        error: error => {
+          this.message = error.error ? error.error : 'Failed to save selected tags';
+          this.messageType = 'error';
+
+          // Clear message after 2 seconds
+          setTimeout(() => {
+            this.message = '';
+            this.messageType = '';
+          }, 2000);
+        }
+      });
   }
 
   clearSelectedTags() {
     this.rightBoxTags = [];
+    this.updateButtonGlow();
+  }
+
+  updateButtonGlow(): void {
+    const okButton = document.querySelector('.bottom-controls .ok');
+    const cancelButton = document.querySelector('.bottom-controls .cancel');
+    if (this.rightBoxTags.length > 0) {
+      okButton?.classList.add('glow');
+      cancelButton?.classList.add('glow');
+    } else {
+      okButton?.classList.remove('glow');
+      cancelButton?.classList.remove('glow');
+    }
   }
 }

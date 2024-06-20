@@ -2,7 +2,7 @@
   display: flex;
   justify-content: space-around;
   align-items: center;
-  height: 100vh;
+  height: calc(100vh - 60px); /* Adjust height to make room for bottom buttons */
   padding: 20px;
 }
 
@@ -54,43 +54,91 @@ li.selected {
   color: rgb(41, 9, 247);
 }
 
-.box button {
+.bottom-controls {
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  padding: 10px;
+  background-color: white;
+  box-shadow: 0 -2px 5px #999;
+}
+
+.bottom-controls button {
   background-color: #007bff;
   color: white;
   border: none;
   border-radius: 5px;
   padding: 10px 20px;
-  margin-right: 10px;
+  margin: 0 10px;
   cursor: pointer;
   transition: background-color 0.3s, transform 0.3s;
-  flex: 1; // Make buttons take equal space
   box-shadow: 3px 3px 5px #999;
 }
 
-.box button:last-child {
-  margin-right: 0; // Remove right margin for the last button
+.bottom-controls button:hover {
+  transform: translateY(-2px);
 }
 
-.box button:hover {
-  background-color: #0056b3; // Default hover color for buttons
+.bottom-controls button.ok {
+  background-color: #007bff; /* Default color */
 }
 
-.box button.ok:hover {
-  background-color: #00b32d; // Green hover color for OK button
+.bottom-controls button.cancel {
+  background-color: #007bff; /* Default color */
 }
 
-.box button.cancel:hover {
-  background-color: #ffcc00; // Yellow hover color for Cancel button
+.bottom-controls button.ok.glow {
+  background-color: #00ff00; /* Green color */
 }
 
-.box button:active {
+.bottom-controls button.cancel.glow {
+  background-color: #ffcc00; /* Yellow color */
+}
+
+.bottom-controls button:active {
   box-shadow: inset 3px 3px 5px #999;
   transform: translateY(2px);
 }
 
+.message {
+  position: fixed;
+  bottom: 80px; /* Position above the bottom controls */
+  width: 100%;
+  text-align: center;
+  padding: 10px;
+  font-size: 16px;
+  font-weight: bold;
+}
+
+.message.success {
+  color: green;
+}
+
+.message.error {
+  color: red;
+}
+
 @media (max-width: 768px) {
-  .box button {
-    width: 100%;
+  .box {
+    width: 80%;
+  }
+  
+  .controls {
+    flex-direction: row;
+  }
+  
+  .controls button {
+    margin: 0 10px;
+  }
+  
+  .bottom-controls {
+    flex-direction: column;
+  }
+  
+  .bottom-controls button {
+    width: 80%;
     margin: 5px 0;
   }
 }

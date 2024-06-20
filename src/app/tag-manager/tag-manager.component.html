@@ -31,10 +31,14 @@
           [class.selected]="selectedTags.includes(tag)">
         {{ tag }}
       </li>
-    </ul>
-    <div *ngIf="rightBoxTags.length > 0">
-      <button class="ok" (click)="saveSelectedTags()">OK</button>
-      <button class="cancel" (click)="clearSelectedTags()">Cancel</button>
-    </div>
+    </ul>   
   </div>
+</div>
+
+<div class="bottom-controls">
+  <button class="ok" (click)="saveSelectedTags()">OK</button>
+  <button class="cancel" (click)="clearSelectedTags()">Cancel</button>
+</div>
+<div *ngIf="message" class="message {{ messageType }}">
+  {{ message }}
 </div>
