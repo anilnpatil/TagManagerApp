@@ -2,7 +2,7 @@
   <div class="box">
     <h2>Available Tags:</h2>
     <ul>
-      <li *ngFor="let tag of availableTags"
+      <li *ngFor="let tag of availableTags" 
           (click)="selectTag(tag, $event, false)"
           [class.selected]="selectedTags.includes(tag)">
         {{ tag }}
@@ -13,14 +13,12 @@
   <div class="controls">
     <button mat-icon-button 
             (click)="moveSelectedTags(true)"
-            [class.selected]="isMoveToRightAllowed()"
-            [disabled]="selectedTags.length === 0">
+            [class.selected]="isMoveToRightAllowed()">
       <mat-icon>arrow_forward</mat-icon>
     </button>
     <button mat-icon-button 
             (click)="moveSelectedTags(false)"
-            [class.selected]="isMoveToLeftAllowed()"
-            [disabled]="selectedTags.length === 0">
+            [class.selected]="isMoveToLeftAllowed()">
       <mat-icon>arrow_back</mat-icon>
     </button>
   </div>
@@ -30,7 +28,8 @@
     <ul>
       <li *ngFor="let tag of rightBoxTags"
           (click)="selectTag(tag, $event, true)"
-          [class.selected]="selectedTags.includes(tag)">
+          [class.selected]="selectedTags.includes(tag)"
+          [class.new-tag]="isNewTag(tag)">
         {{ tag }}
       </li>
     </ul>   
@@ -38,10 +37,9 @@
 </div>
 
 <div class="bottom-controls">
-  <button class="ok" (click)="saveSelectedTags()" [disabled]="okButtonDisabled">OK</button>
-  <button class="cancel" (click)="clearSelectedTags()" [disabled]="rightBoxTags.length === 0">Cancel</button>
+  <button class="ok" (click)="saveSelectedTags()">OK</button>
+  <button class="cancel" (click)="clearSelectedTags()">Cancel</button>
 </div>
-
 <div *ngIf="message" class="message {{ messageType }}">
   {{ message }}
 </div>
